@@ -5,12 +5,15 @@ Plataforma eletrónica de venda de bilhetes para eventos.
 Projeto desenvolvido no âmbito da unidade curricular
 de Sistemas Distribuídos do Mestrado em Engenharia Informática.
 
-## Fase 1
+## Requirements
+- Node.js + express (locally)
+- Docker Desktop
 
-Linguagem(Node.js + express)
+## Execute
+docker compose up --build -d
 
-- API Gateway
-- Catalog
-- Docker Compose
-- Prometheus
-- Grafana
+## Endpoints
+- API Gateway: http://localhost:8000/events
+- Catalog: http://localhost:8001/events
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000

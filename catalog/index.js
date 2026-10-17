@@ -28,6 +28,10 @@ const requestDuration = new client.Histogram({
 
 // Middleware to measure request duration and count
 app.use((req, res, next) => {
+    // Skip metrics for the /metrics endpoint to avoid self-monitoring
+    if (req.path === '/metrics') {
+        return next();
+    }
     const start = process.hrtime.bigint();
 
     res.on('finish', () => {

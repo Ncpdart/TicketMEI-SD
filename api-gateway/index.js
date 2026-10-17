@@ -1,0 +1,76 @@
+
+const express = require('express');
+const client = require('prom-client');
+
+const app = express();
+const PORT = 8000;
+const CATALOG_URL = process.env.CATALOG_URL || 'http://localhost:8001';
+
+const register = new client.Registry();
+
+client.collectDefaultMetrics({ register });
+
+//Total number of requests received by the API Gateway
+const requestsTotal = new client.Counter({
+    name: 'gateway_requests_total',
+    help: 'Total number of requests received by the API Gateway',
+    labelNames: ['method', 'endpoint', 'http_status'],
+    registers: [register]
+});
+
+// Duration of requests received by the API Gateway
+const requestDuration = new client.Histogram({
+    name: 'gateway_request_duration_seconds',
+    help: 'Duration of API Gateway requests in seconds',
+    labelNames: ['endpoint'],
+    registers: [register]
+});
+
+// Middleware to measure request duration and count
+app.use((req, res, next) => {
+    // Skip metrics for the /metrics endpoint to avoid self-monitoring
+    if (req.path === '/metrics') {
+        return next();
+    }
+    const start = process.hrtime.bigint();
+
+    res.on('finish', () => {
+        const duration = Number(process.hrtime.bigint() - start) / 1e9;
+        const endpoint = req.route?.path || req.path;
+    
+        requestsTotal.inc({
+            method: req.method,
+            endpoint,
+            http_status: String(res.statusCode)
+        });
+
+        requestDuration.observe({ endpoint }, duration);
+    });
+
+    next();
+});
+
+// Routes
+app.get('/events', async (req, res) => {
+    try {
+        const response = await fetch(`${CATALOG_URL}/events`);
+        const data = await response.json();
+
+        res.status(response.status).json(data);
+    } catch (error) {
+        console.error('Error communicating with Catalog:', error.message);
+
+        res.status(502).json({
+            error: 'Catalog service unavailable'
+        });
+    }
+});
+
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+});
+
+app.listen(PORT, () => {
+    console.log(`API Gateway listening on port ${PORT}`);
+});
