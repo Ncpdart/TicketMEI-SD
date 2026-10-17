@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Summer Music Festival",
+    "venue": "Funchal",
+    "date": "2026-11-14",
+    "price": 35.0
+  },
+  {
+    "id": 2,
+    "name": "Rock Night",
+    "venue": "Funchal",
+    "date": "2026-11-21",
+    "price": 25.0
+  },
+  {
+    "id": 3,
+    "name": "Jazz Evening",
+    "venue": "Câmara de Lobos",
+    "date": "2026-12-05",
+    "price": 18.5
+  }
+]
