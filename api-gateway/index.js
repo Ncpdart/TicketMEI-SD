@@ -5,8 +5,11 @@ const client = require('prom-client');
 const app = express();
 const PORT = 8000;
 const CATALOG_URL = process.env.CATALOG_URL || 'http://localhost:8001';
+const ORDER_URL = process.env.ORDER_URL || 'http://localhost:8002';
 
 const register = new client.Registry();
+
+app.use(express.json())
 
 client.collectDefaultMetrics({ register });
 
@@ -19,6 +22,7 @@ const requestsTotal = new client.Counter({
 });
 
 // Duration of requests received by the API Gateway
+
 const requestDuration = new client.Histogram({
     name: 'gateway_request_duration_seconds',
     help: 'Duration of API Gateway requests in seconds',
@@ -62,6 +66,27 @@ app.get('/events', async (req, res) => {
 
         res.status(502).json({
             error: 'Catalog service unavailable'
+        });
+    }
+});
+
+app.post('/orders', async (req, res) => {
+    try {
+        const response = await fetch(`${ORDER_URL}/orders`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(req.body)
+        });
+
+        const data = await response.json();
+        res.status(response.status).json(data);
+    } catch (error) {
+        console.error('Error communicating with Order:', error.message);
+
+        res.status(502).json({
+            error: 'Order service unavailable'
         });
     }
 });

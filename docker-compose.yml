@@ -5,13 +5,24 @@ services:
       - "8000:8000"
     environment:
       CATALOG_URL: http://catalog:8001
+      ORDER_URL: http://order:8002
     depends_on:
       - catalog
+      - order
 
   catalog:
     build: ./catalog
     ports:
       - "8001:8001"
+
+  order:
+    build: ./order
+    ports:
+      - "8002:8002"
+    environment:
+      API_GATEWAY_URL: http://api-gateway:8000
+    volumes:
+      - ./order/database:/app/database
 
   prometheus:
     image: prom/prometheus:latest
@@ -22,6 +33,7 @@ services:
     depends_on:
       - api-gateway
       - catalog
+      - order
 
   grafana:
     image: grafana/grafana:latest
