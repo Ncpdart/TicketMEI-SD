@@ -21,8 +21,23 @@ services:
       - "8002:8002"
     environment:
       API_GATEWAY_URL: http://api-gateway:8000
+      RABBITMQ_URL: amqp://rabbitmq
     volumes:
       - ./order/database:/app/database
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   prometheus:
     image: prom/prometheus:latest

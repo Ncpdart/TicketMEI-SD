@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "amqplib": "^0.10.4",
     "better-sqlite3": "^13.0.3",
     "express": "^5.3.0",
     "prom-client": "^15.1.3"

@@ -1,10 +1,13 @@
 const express = require("express");
 const Database = require("better-sqlite3");
 const client = require("prom-client");
+const amqp = require("amqplib");
 const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 8002;
+const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://localhost";
+const QUEUE_NAME = "order_created";
 
 // Middleware
 app.use(express.json());
@@ -35,7 +38,31 @@ const ordersInitiated = new client.Counter({
   labelNames: ["status"],
 });
 
-const API_GATEWAY_URL = process.env.API_GATEWAY_URL  || "http://localhost:8000";
+const API_GATEWAY_URL = process.env.API_GATEWAY_URL || "http://localhost:8000";
+
+// RabbitMQ connection
+let rabbitChannel = null;
+
+async function connectRabbitMQ() {
+  try {
+    const connection = await amqp.connect(RABBITMQ_URL);
+    rabbitChannel = await connection.createChannel();
+    await rabbitChannel.assertQueue(QUEUE_NAME, { durable: true });
+    console.log("Connected to RabbitMQ");
+
+    connection.on("close", () => {
+      console.warn("RabbitMQ connection closed, retrying in 5s...");
+      rabbitChannel = null;
+      setTimeout(connectRabbitMQ, 5000);
+    });
+  } catch (error) {
+    console.error("Failed to connect to RabbitMQ, retrying in 5s...", error.message);
+    setTimeout(connectRabbitMQ, 5000);
+  }
+}
+
+connectRabbitMQ();
+
 // POST /orders
 app.post("/orders", async (req, res) => {
   const { customer_id, event_id, quantity } = req.body;
@@ -54,7 +81,7 @@ app.post("/orders", async (req, res) => {
   }
 
   try {
-    // Obtain event details from catalog throught the api-gateway service, to avoid direct communication between services
+    // Obtain event details from catalog through the api-gateway service
     const response = await fetch(`${API_GATEWAY_URL}/events`);
 
     if (!response.ok) {
@@ -64,7 +91,6 @@ app.post("/orders", async (req, res) => {
     }
 
     const events = await response.json();
-    // Finds the selected event on the request
     const event = events.find((event) => event.id === event_id);
 
     if (!event) {
@@ -96,6 +122,26 @@ app.post("/orders", async (req, res) => {
       .get(result.lastInsertRowid);
 
     ordersInitiated.inc({ status: "PENDING" });
+
+    // Publish OrderCreated message to RabbitMQ
+    if (rabbitChannel) {
+      const message = {
+        order_id: order.id,
+        customer_id: order.customer_id,
+        event_id: order.event_id,
+        total_amount: order.total_amount,
+        quantity: order.quantity,
+        created_at: order.created_at,
+      };
+      rabbitChannel.sendToQueue(
+        QUEUE_NAME,
+        Buffer.from(JSON.stringify(message)),
+        { persistent: true }
+      );
+      console.log(`OrderCreated published for order ${order.id}`);
+    } else {
+      console.warn("RabbitMQ not available, skipping message publish");
+    }
 
     return res.status(202).json(order);
   } catch (error) {
