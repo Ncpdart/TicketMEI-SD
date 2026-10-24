@@ -28,6 +28,18 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  notification:
+    build: ./notification
+    ports:
+      - "8003:8003"
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq
+    volumes:
+      - ./notification/database:/app/database
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -49,6 +61,7 @@ services:
       - api-gateway
       - catalog
       - order
+      - notification
 
   grafana:
     image: grafana/grafana:latest
