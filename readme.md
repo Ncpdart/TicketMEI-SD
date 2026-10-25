@@ -15,7 +15,7 @@ docker compose up --build -d
 ## Endpoints
 - API Gateway: http://localhost:8000/events
 - Catalog: http://localhost:8001/events
-- Order: http://localhost:8001/orders
+- Order: http://localhost:8002/orders
 
 (Monitorização)
 - Prometheus: http://localhost:9090
