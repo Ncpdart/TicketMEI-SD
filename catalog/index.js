@@ -58,7 +58,7 @@ app.get('/events', (req, res) => {
 
 app.get('/events/:id', (req, res) => {
     const event = events.find(
-        event => event.id === Number(req.params.id)
+        event => event.id === req.params.id
     );
 
     if (!event) {

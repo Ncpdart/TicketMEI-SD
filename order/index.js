@@ -70,7 +70,8 @@ app.post("/orders", async (req, res) => {
   //RF2 - Quantity ticket limit
   if (
     !customer_id ||
-    !Number.isInteger(event_id) ||
+    typeof event_id !== "string" || 
+    !event_id.trim() ||
     !Number.isInteger(quantity) ||
     quantity <= 0 ||
     quantity > 4
@@ -100,7 +101,7 @@ app.post("/orders", async (req, res) => {
     }
 
     // Calculate total using the Catalog price
-    const total_amount = Number((event.price * quantity).toFixed(2));
+    const total_amount = Number((event.price_eur * quantity).toFixed(2));
 
     const result = db
       .prepare(
