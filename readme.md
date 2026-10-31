@@ -14,8 +14,8 @@ docker compose up --build -d
 
 ## Endpoints
 - API Gateway: http://localhost:8000/events
-- Catalog: http://localhost:8001/events
-- Order: http://localhost:8002/orders/ID
+- Catalog: http://localhost:8001/events/evt-101
+- Order: http://localhost:8002/orders/1
 - Notification: http://localhost:8003/metrics
 
 (Monitorização)

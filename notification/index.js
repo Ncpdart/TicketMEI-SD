@@ -1,7 +1,7 @@
 const express = require("express");
 const amqp = require("amqplib");
 const client = require("prom-client");
-const Database = require("better-sqlite3");
+const fs = require("fs");
 const path = require("path");
 
 const app = express();
@@ -9,17 +9,27 @@ const PORT = process.env.PORT || 8003;
 const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://localhost";
 const QUEUE_NAME = "order_created";
 
-// Database
-const db = new Database(path.join(__dirname, "database", "notification.db"));
+// Json Logs
+const LOGS_FILE = path.join(__dirname, "data", "notifications_logs.json");
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS notifications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_id INTEGER NOT NULL,
-    email TEXT NOT NULL,
-    status TEXT NOT NULL
-  )
-`);
+function loadNotifications() {
+  try {
+    return JSON.parse(fs.readFileSync(LOGS_FILE, "utf8"));
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return [];
+    }
+    throw error;
+  }
+}
+
+function saveNotification(notification) {
+  const notifications = loadNotifications();
+  notifications.push(notification);
+
+  fs.mkdirSync(path.dirname(LOGS_FILE), { recursive: true });
+  fs.writeFileSync(LOGS_FILE, JSON.stringify(notifications, null, 2));
+}
 
 // Prometheus metrics
 client.collectDefaultMetrics();
@@ -58,7 +68,9 @@ async function startConsumer() {
     // Process one message at a time
     channel.prefetch(1);
 
-    console.log("Notification service connected to RabbitMQ, waiting for messages...");
+    console.log(
+      "Notification service connected to RabbitMQ, waiting for messages...",
+    );
 
     channel.consume(QUEUE_NAME, async (msg) => {
       if (!msg) return;
@@ -71,13 +83,15 @@ async function startConsumer() {
         const success = await sendEmail();
         const status = success ? "SENT" : "FAILED";
 
-        // Save to database
-        db.prepare(
-          "INSERT INTO notifications (order_id, email, status) VALUES (?, ?, ?)"
-        ).run(order.order_id, email, status);
+        // Save to logs
+        saveNotification({
+          order_id: order.order_id,
+          email,
+          status,
+        });
 
         console.log(
-          `Notification ${status} | order_id=${order.order_id} email=${email}`
+          `Notification ${status} | order_id=${order.order_id} email=${email}`,
         );
 
         notificationsProcessed.inc({ status });
@@ -85,11 +99,16 @@ async function startConsumer() {
 
         channel.ack(msg);
       } catch (error) {
-        console.error(`Error processing notification for order ${order.order_id}:`, error.message);
+        console.error(
+          `Error processing notification for order ${order.order_id}:`,
+          error.message,
+        );
 
-        db.prepare(
-          "INSERT INTO notifications (order_id, email, status) VALUES (?, ?, ?)"
-        ).run(order.order_id, email, "FAILED");
+        saveNotification({
+          order_id: order.order_id,
+          email,
+          status: "FAILED"
+        });
 
         notificationsProcessed.inc({ status: "FAILED" });
         end({ status: "FAILED" });
@@ -102,7 +121,10 @@ async function startConsumer() {
       setTimeout(startConsumer, 5000);
     });
   } catch (error) {
-    console.error("Failed to connect to RabbitMQ, retrying in 5s...", error.message);
+    console.error(
+      "Failed to connect to RabbitMQ, retrying in 5s...",
+      error.message,
+    );
     setTimeout(startConsumer, 5000);
   }
 }

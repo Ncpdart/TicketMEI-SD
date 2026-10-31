@@ -1,0 +1,22 @@
+[
+  {
+    "order_id": 6,
+    "email": "customer_C001@example.com",
+    "status": "SENT"
+  },
+  {
+    "order_id": 7,
+    "email": "customer_C001@example.com",
+    "status": "FAILED"
+  },
+  {
+    "order_id": 8,
+    "email": "customer_C001@example.com",
+    "status": "SENT"
+  },
+  {
+    "order_id": 9,
+    "email": "customer_C004@example.com",
+    "status": "SENT"
+  }
+]

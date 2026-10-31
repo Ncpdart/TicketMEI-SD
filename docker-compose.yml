@@ -35,7 +35,7 @@ services:
     environment:
       RABBITMQ_URL: amqp://rabbitmq
     volumes:
-      - ./notification/database:/app/database
+      - ./notification/data:/app/data
     depends_on:
       rabbitmq:
         condition: service_healthy
