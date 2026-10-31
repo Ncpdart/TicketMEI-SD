@@ -1,0 +1,226 @@
+﻿apiVersion: v1
+data:
+  dashboard.json: "{\r\n  \"uid\": \"ticketmei\",\r\n  \"title\": \"TicketMEI\",\r\n
+    \ \"tags\": [\r\n    \"ticketmei\"\r\n  ],\r\n  \"timezone\": \"browser\",\r\n
+    \ \"schemaVersion\": 39,\r\n  \"version\": 1,\r\n  \"refresh\": \"5s\",\r\n  \"time\":
+    {\r\n    \"from\": \"now-15m\",\r\n    \"to\": \"now\"\r\n  },\r\n  \"panels\":
+    [\r\n    {\r\n      \"id\": 1,\r\n      \"title\": \"RPS por servi├ºo\",\r\n      \"type\":
+    \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n
+    \       \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n
+    \         \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n            \"uid\":
+    \"prometheus\"\r\n          },\r\n          \"expr\": \"sum(rate(gateway_requests_total[1m]))\",\r\n
+    \         \"legendFormat\": \"api-gateway\",\r\n          \"refId\": \"A\"\r\n
+    \       },\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
+    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
+    \"sum(rate(catalog_requests_total[1m]))\",\r\n          \"legendFormat\": \"catalog\",\r\n
+    \         \"refId\": \"B\"\r\n        }\r\n      ],\r\n      \"gridPos\": {\r\n
+    \       \"x\": 0,\r\n        \"y\": 0,\r\n        \"w\": 12,\r\n        \"h\":
+    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
+    \"reqps\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n
+    \   {\r\n      \"id\": 2,\r\n      \"title\": \"RPS por endpoint e status (Gateway)\",\r\n
+    \     \"type\": \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\":
+    \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
+    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"sum
+    by (endpoint, http_status) (rate(gateway_requests_total[1m]))\",\r\n          \"legendFormat\":
+    \"{{endpoint}} {{http_status}}\",\r\n          \"refId\": \"A\"\r\n        }\r\n
+    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 0,\r\n
+    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
+    \       \"defaults\": {\r\n          \"unit\": \"reqps\"\r\n        },\r\n        \"overrides\":
+    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 3,\r\n      \"title\": \"Lat├¬ncia
+    p95/p99 (Gateway)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
+    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"histogram_quantile(0.95, sum by (le) (rate(gateway_request_duration_seconds_bucket[1m])))\",\r\n
+    \         \"legendFormat\": \"p95\",\r\n          \"refId\": \"A\"\r\n        },\r\n
+    \       {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"histogram_quantile(0.99,
+    sum by (le) (rate(gateway_request_duration_seconds_bucket[1m])))\",\r\n          \"legendFormat\":
+    \"p99\",\r\n          \"refId\": \"B\"\r\n        }\r\n      ],\r\n      \"gridPos\":
+    {\r\n        \"x\": 0,\r\n        \"y\": 8,\r\n        \"w\": 12,\r\n        \"h\":
+    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
+    \"s\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n    {\r\n
+    \     \"id\": 4,\r\n      \"title\": \"Taxa de erros HTTP (Gateway)\",\r\n      \"type\":
+    \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n
+    \       \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n
+    \         \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n            \"uid\":
+    \"prometheus\"\r\n          },\r\n          \"expr\": \"sum(rate(gateway_requests_total{http_status=~\\\"5..\\\"}[1m]))
+    / sum(rate(gateway_requests_total[1m]))\",\r\n          \"legendFormat\": \"5xx\",\r\n
+    \         \"refId\": \"A\"\r\n        },\r\n        {\r\n          \"datasource\":
+    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"sum(rate(gateway_requests_total{http_status=~\\\"4..\\\"}[1m]))
+    / sum(rate(gateway_requests_total[1m]))\",\r\n          \"legendFormat\": \"4xx\",\r\n
+    \         \"refId\": \"B\"\r\n        }\r\n      ],\r\n      \"gridPos\": {\r\n
+    \       \"x\": 0,\r\n        \"y\": 16,\r\n        \"w\": 12,\r\n        \"h\":
+    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
+    \"percentunit\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n
+    \   {\r\n      \"id\": 5,\r\n      \"title\": \"Lat├¬ncia p95/p99 (Catalog)\",\r\n
+    \     \"type\": \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\":
+    \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
+    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"histogram_quantile(0.95,
+    sum by (le) (rate(catalog_request_duration_seconds_bucket[1m])))\",\r\n          \"legendFormat\":
+    \"p95\",\r\n          \"refId\": \"A\"\r\n        },\r\n        {\r\n          \"datasource\":
+    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"histogram_quantile(0.99, sum by (le) (rate(catalog_request_duration_seconds_bucket[1m])))\",\r\n
+    \         \"legendFormat\": \"p99\",\r\n          \"refId\": \"B\"\r\n        }\r\n
+    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 8,\r\n
+    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
+    \       \"defaults\": {\r\n          \"unit\": \"s\"\r\n        },\r\n        \"overrides\":
+    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 6,\r\n      \"title\": \"Taxa
+    de erros HTTP (Catalog)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
+    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"sum(rate(catalog_requests_total{http_status=~\\\"5..\\\"}[1m]))
+    / sum(rate(catalog_requests_total[1m]))\",\r\n          \"legendFormat\": \"5xx\",\r\n
+    \         \"refId\": \"A\"\r\n        },\r\n        {\r\n          \"datasource\":
+    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"sum(rate(catalog_requests_total{http_status=~\\\"4..\\\"}[1m]))
+    / sum(rate(catalog_requests_total[1m]))\",\r\n          \"legendFormat\": \"4xx\",\r\n
+    \         \"refId\": \"B\"\r\n        }\r\n      ],\r\n      \"gridPos\": {\r\n
+    \       \"x\": 12,\r\n        \"y\": 16,\r\n        \"w\": 12,\r\n        \"h\":
+    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
+    \"percentunit\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n
+    \   {\r\n      \"id\": 7,\r\n      \"title\": \"Order\",\r\n      \"type\": \"row\",\r\n
+    \     \"collapsed\": false,\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
+    24,\r\n        \"w\": 24,\r\n        \"h\": 1\r\n      },\r\n      \"panels\":
+    []\r\n    },\r\n    {\r\n      \"id\": 8,\r\n      \"title\": \"Pedidos criados
+    por segundo (por estado)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
+    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"sum by (status) (rate(orders_initiated_total[1m]))\",\r\n
+    \         \"legendFormat\": \"{{status}}\",\r\n          \"refId\": \"A\"\r\n
+    \       }\r\n      ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
+    25,\r\n        \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\":
+    {\r\n        \"defaults\": {\r\n          \"unit\": \"ops\"\r\n        },\r\n
+    \       \"overrides\": []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 9,\r\n
+    \     \"title\": \"Total de pedidos criados\",\r\n      \"type\": \"stat\",\r\n
+    \     \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n        \"uid\":
+    \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
+    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"sum by (status) (orders_initiated_total)\",\r\n
+    \         \"legendFormat\": \"{{status}}\",\r\n          \"refId\": \"A\"\r\n
+    \       }\r\n      ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\":
+    25,\r\n        \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\":
+    {\r\n        \"defaults\": {\r\n          \"unit\": \"short\"\r\n        },\r\n
+    \       \"overrides\": []\r\n      },\r\n      \"options\": {\r\n        \"reduceOptions\":
+    {\r\n          \"calcs\": [\r\n            \"lastNotNull\"\r\n          ],\r\n
+    \         \"values\": false,\r\n          \"fields\": \"\"\r\n        },\r\n        \"colorMode\":
+    \"value\",\r\n        \"graphMode\": \"none\"\r\n      }\r\n    },\r\n    {\r\n
+    \     \"id\": 10,\r\n      \"title\": \"Notification\",\r\n      \"type\": \"row\",\r\n
+    \     \"collapsed\": false,\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
+    33,\r\n        \"w\": 24,\r\n        \"h\": 1\r\n      },\r\n      \"panels\":
+    []\r\n    },\r\n    {\r\n      \"id\": 11,\r\n      \"title\": \"Notifica├º├╡es
+    por segundo (SENT / FAILED)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
+    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"sum by (status) (rate(notifications_processed_total[1m]))\",\r\n
+    \         \"legendFormat\": \"{{status}}\",\r\n          \"refId\": \"A\"\r\n
+    \       }\r\n      ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
+    34,\r\n        \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\":
+    {\r\n        \"defaults\": {\r\n          \"unit\": \"ops\"\r\n        },\r\n
+    \       \"overrides\": []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 12,\r\n
+    \     \"title\": \"Lat├¬ncia p95/p99 das notifica├º├╡es\",\r\n      \"type\": \"timeseries\",\r\n
+    \     \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n        \"uid\":
+    \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
+    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"histogram_quantile(0.95, sum by (le) (rate(notification_processing_duration_seconds_bucket[1m])))\",\r\n
+    \         \"legendFormat\": \"p95\",\r\n          \"refId\": \"A\"\r\n        },\r\n
+    \       {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"histogram_quantile(0.99,
+    sum by (le) (rate(notification_processing_duration_seconds_bucket[1m])))\",\r\n
+    \         \"legendFormat\": \"p99\",\r\n          \"refId\": \"B\"\r\n        }\r\n
+    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 34,\r\n
+    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
+    \       \"defaults\": {\r\n          \"unit\": \"s\"\r\n        },\r\n        \"overrides\":
+    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 13,\r\n      \"title\": \"Total
+    de notifica├º├╡es\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n
+    \       \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n
+    \     \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
+    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
+    \"round(sum by (status) (increase(notifications_processed_total[$__range])))\",\r\n
+    \         \"legendFormat\": \"{{status}}\",\r\n          \"refId\": \"A\"\r\n
+    \       }\r\n      ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
+    42,\r\n        \"w\": 12,\r\n        \"h\": 5\r\n      },\r\n      \"fieldConfig\":
+    {\r\n        \"defaults\": {\r\n          \"unit\": \"short\"\r\n        },\r\n
+    \       \"overrides\": []\r\n      },\r\n      \"options\": {\r\n        \"reduceOptions\":
+    {\r\n          \"calcs\": [\r\n            \"lastNotNull\"\r\n          ],\r\n
+    \         \"values\": false,\r\n          \"fields\": \"\"\r\n        },\r\n        \"colorMode\":
+    \"value\",\r\n        \"graphMode\": \"none\"\r\n      }\r\n    },\r\n    {\r\n
+    \     \"id\": 14,\r\n      \"title\": \"Taxa de falhas das notifica├º├╡es\",\r\n
+    \     \"type\": \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\":
+    \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
+    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"sum(rate(notifications_processed_total{status=\\\"FAILED\\\"}[1m]))
+    / sum(rate(notifications_processed_total[1m])) or vector(0)\",\r\n          \"legendFormat\":
+    \"FAILED\",\r\n          \"refId\": \"A\"\r\n        }\r\n      ],\r\n      \"gridPos\":
+    {\r\n        \"x\": 12,\r\n        \"y\": 42,\r\n        \"w\": 12,\r\n        \"h\":
+    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
+    \"percentunit\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n
+    \   {\r\n      \"id\": 15,\r\n      \"title\": \"RabbitMQ\",\r\n      \"type\":
+    \"row\",\r\n      \"collapsed\": false,\r\n      \"gridPos\": {\r\n        \"x\":
+    0,\r\n        \"y\": 50,\r\n        \"w\": 24,\r\n        \"h\": 1\r\n      },\r\n
+    \     \"panels\": []\r\n    },\r\n    {\r\n      \"id\": 16,\r\n      \"title\":
+    \"Tamanho da fila order_created\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
+    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
+    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
+    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"rabbitmq_queue_messages_ready{queue=\\\"order_created\\\"}\",\r\n
+    \         \"legendFormat\": \"ready (├á espera)\",\r\n          \"refId\": \"A\"\r\n
+    \       },\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
+    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
+    \"rabbitmq_queue_messages_unacked{queue=\\\"order_created\\\"}\",\r\n          \"legendFormat\":
+    \"unacked (em processamento)\",\r\n          \"refId\": \"B\"\r\n        },\r\n
+    \       {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"rabbitmq_queue_messages{queue=\\\"order_created\\\"}\",\r\n
+    \         \"legendFormat\": \"total\",\r\n          \"refId\": \"C\"\r\n        }\r\n
+    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\": 51,\r\n
+    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
+    \       \"defaults\": {\r\n          \"unit\": \"short\"\r\n        },\r\n        \"overrides\":
+    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 17,\r\n      \"title\": \"Produ├º├úo
+    vs consumo (pedidos/s vs notifica├º├╡es/s)\",\r\n      \"type\": \"timeseries\",\r\n
+    \     \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n        \"uid\":
+    \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
+    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
+    \         },\r\n          \"expr\": \"sum(rate(orders_initiated_total[1m]))\",\r\n
+    \         \"legendFormat\": \"pedidos criados (publicados)\",\r\n          \"refId\":
+    \"A\"\r\n        },\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
+    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
+    \"sum(rate(notifications_processed_total[1m]))\",\r\n          \"legendFormat\":
+    \"notifica├º├╡es processadas (consumidas)\",\r\n          \"refId\": \"B\"\r\n        }\r\n
+    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 51,\r\n
+    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
+    \       \"defaults\": {\r\n          \"unit\": \"ops\"\r\n        },\r\n        \"overrides\":
+    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 18,\r\n      \"title\": \"Mensagens
+    ├á espera na fila\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n
+    \       \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n
+    \     \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
+    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
+    \"rabbitmq_queue_messages_ready{queue=\\\"order_created\\\"}\",\r\n          \"legendFormat\":
+    \"ready\",\r\n          \"refId\": \"A\"\r\n        }\r\n      ],\r\n      \"gridPos\":
+    {\r\n        \"x\": 0,\r\n        \"y\": 59,\r\n        \"w\": 6,\r\n        \"h\":
+    5\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
+    \"short\"\r\n        },\r\n        \"overrides\": []\r\n      },\r\n      \"options\":
+    {\r\n        \"reduceOptions\": {\r\n          \"calcs\": [\r\n            \"lastNotNull\"\r\n
+    \         ],\r\n          \"values\": false,\r\n          \"fields\": \"\"\r\n
+    \       },\r\n        \"colorMode\": \"value\",\r\n        \"graphMode\": \"none\"\r\n
+    \     }\r\n    },\r\n    {\r\n      \"id\": 19,\r\n      \"title\": \"Consumidores
+    ligados\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n        \"type\":
+    \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
+    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
+    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"rabbitmq_queue_consumers{queue=\\\"order_created\\\"}\",\r\n
+    \         \"legendFormat\": \"consumers\",\r\n          \"refId\": \"A\"\r\n        }\r\n
+    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 6,\r\n        \"y\": 59,\r\n
+    \       \"w\": 6,\r\n        \"h\": 5\r\n      },\r\n      \"fieldConfig\": {\r\n
+    \       \"defaults\": {\r\n          \"unit\": \"short\"\r\n        },\r\n        \"overrides\":
+    []\r\n      },\r\n      \"options\": {\r\n        \"reduceOptions\": {\r\n          \"calcs\":
+    [\r\n            \"lastNotNull\"\r\n          ],\r\n          \"values\": false,\r\n
+    \         \"fields\": \"\"\r\n        },\r\n        \"colorMode\": \"value\",\r\n
+    \       \"graphMode\": \"none\"\r\n      }\r\n    }\r\n  ]\r\n}"
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard

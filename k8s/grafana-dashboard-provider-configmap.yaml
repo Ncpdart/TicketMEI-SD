@@ -1,0 +1,8 @@
+﻿apiVersion: v1
+data:
+  dashboards.yml: "apiVersion: 1\r\n\r\nproviders:\r\n  - name: TicketMEI\r\n    type:
+    file\r\n    disableDeletion: false\r\n    allowUiUpdates: true\r\n    options:\r\n
+    \     path: /var/lib/grafana/dashboards"
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-provider
