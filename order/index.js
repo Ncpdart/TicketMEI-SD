@@ -2,6 +2,7 @@ const express = require("express");
 const Database = require("better-sqlite3");
 const client = require("prom-client");
 const amqp = require("amqplib");
+const fs = require("fs");
 const path = require("path");
 
 const app = express();
@@ -14,7 +15,11 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 // Database connection
-const db = new Database(path.join(__dirname, "database", "order.db"));
+const databaseDirectory = path.join(__dirname, "database");
+// Create the database directory if it doesn't exist
+fs.mkdirSync(databaseDirectory, { recursive: true });
+
+const db = new Database(path.join(databaseDirectory, "order.db"));
 
 //For date creation its being used the UTC time zone to avoid issues with time zones in different regions
 db.exec(`
