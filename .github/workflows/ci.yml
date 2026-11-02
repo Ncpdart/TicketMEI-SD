@@ -1,0 +1,43 @@
+name: CI (fases 1 e 2)
+
+# Valida a compilação, o ambiente Docker Compose e corre os testes k6 (RNF4, fases 1 e 2)
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-compose-k6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compilar as imagens
+        run: docker compose build
+
+      - name: Arrancar o ambiente Docker Compose
+        run: docker compose up -d
+
+      - name: Esperar que o ambiente responda
+        run: |
+          for url in http://localhost:8000/events http://localhost:8002/metrics http://localhost:8003/metrics; do
+            for i in $(seq 1 45); do
+              curl -sf "$url" > /dev/null && break
+              [ "$i" = 45 ] && { echo "FALHOU $url"; exit 1; }
+              sleep 2
+            done
+          done
+
+      - name: Testes k6
+        # Corre no compose (o script usa o host api-gateway). --vus/--duration encurtam o teste: 500 VUs não cabem num runner.
+        run: docker compose --profile testing run --rm k6 run --vus 20 --duration 30s load-test.js
+
+      - name: Logs (só se falhar)
+        if: failure()
+        run: docker compose logs --no-color --tail=100
+
+      - name: Desligar
+        if: always()
+        run: docker compose down -v

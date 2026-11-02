@@ -73,3 +73,15 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     depends_on:
       - prometheus
+
+  k6:
+    image: grafana/k6:0.49.0
+    user: root
+    working_dir: /ci-scripts
+    volumes:
+      - ./k6:/ci-scripts
+    command: run load-test.js
+    depends_on:
+      - api-gateway
+    profiles:
+      - testing
