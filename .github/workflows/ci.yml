@@ -11,8 +11,6 @@ jobs:
   build-compose-k6:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      RATE_LIMIT_MAX: "1000000"
     steps:
       - uses: actions/checkout@v4
 

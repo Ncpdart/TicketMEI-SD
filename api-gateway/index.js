@@ -31,10 +31,10 @@ const requestDuration = new client.Histogram({
     registers: [register]
 });
 
-// Rate limiter (redis)
+// Rate limiter (redis): max requests per client IP per window, applied to POST /orders
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
-const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 100);
-const RATE_LIMIT_WINDOW = Number(process.env.RATE_LIMIT_WINDOW_SECONDS || 60);
+const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 5);
+const RATE_LIMIT_WINDOW = Number(process.env.RATE_LIMIT_WINDOW_SECONDS || 1);
 
 const redis = createClient({ url: REDIS_URL, disableOfflineQueue: true });
 redis.on('error', (e) => console.error('Redis error:', e.message));
@@ -47,8 +47,6 @@ const rateLimitedTotal = new client.Counter({
 });
 
 async function rateLimiter(req, res, next) {
-    if (req.path === '/metrics') return next();
-
     const bucket = Math.floor(Date.now() / 1000 / RATE_LIMIT_WINDOW);
     const key = `ratelimit:${req.ip}:${bucket}`;
 
@@ -93,8 +91,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(rateLimiter);
-
 // Routes
 app.get('/events', async (req, res) => {
     try {
@@ -111,7 +107,7 @@ app.get('/events', async (req, res) => {
     }
 });
 
-app.post('/orders', async (req, res) => {
+app.post('/orders', rateLimiter, async (req, res) => {
     try {
         const response = await fetch(`${ORDER_URL}/orders`, {
             method: 'POST',
