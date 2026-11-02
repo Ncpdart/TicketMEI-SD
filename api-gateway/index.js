@@ -1,6 +1,7 @@
 
 const express = require('express');
 const client = require('prom-client');
+const { createClient } = require('redis');
 
 const app = express();
 const PORT = 8000;
@@ -30,6 +31,44 @@ const requestDuration = new client.Histogram({
     registers: [register]
 });
 
+// Rate limiter (redis)
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 100);
+const RATE_LIMIT_WINDOW = Number(process.env.RATE_LIMIT_WINDOW_SECONDS || 60);
+
+const redis = createClient({ url: REDIS_URL, disableOfflineQueue: true });
+redis.on('error', (e) => console.error('Redis error:', e.message));
+redis.connect().catch((e) => console.error('Redis connect failed:', e.message));
+
+const rateLimitedTotal = new client.Counter({
+    name: 'gateway_rate_limited_total',
+    help: 'Total number of requests rejected by the rate limiter',
+    registers: [register]
+});
+
+async function rateLimiter(req, res, next) {
+    if (req.path === '/metrics') return next();
+
+    const bucket = Math.floor(Date.now() / 1000 / RATE_LIMIT_WINDOW);
+    const key = `ratelimit:${req.ip}:${bucket}`;
+
+    try {
+        const [count] = await redis.multi().incr(key).expire(key, RATE_LIMIT_WINDOW).exec();
+
+        res.set('X-RateLimit-Limit', String(RATE_LIMIT_MAX));
+        res.set('X-RateLimit-Remaining', String(Math.max(0, RATE_LIMIT_MAX - count)));
+
+        if (count > RATE_LIMIT_MAX) {
+            rateLimitedTotal.inc();
+            res.set('Retry-After', String(RATE_LIMIT_WINDOW));
+            return res.status(429).json({ error: 'Too many requests' });
+        }
+    } catch (e) {
+        // Redis unavailable: allows request through instead of blocking
+    }
+    next();
+}
+
 // Middleware to measure request duration and count
 app.use((req, res, next) => {
     // Skip metrics for the /metrics endpoint to avoid self-monitoring
@@ -53,6 +92,8 @@ app.use((req, res, next) => {
 
     next();
 });
+
+app.use(rateLimiter);
 
 // Routes
 app.get('/events', async (req, res) => {

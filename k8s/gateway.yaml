@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: ticketmei/gateway:1.0
+          image: ticketmei/gateway:1.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -26,6 +26,12 @@ spec:
               value: "http://catalog:8001"
             - name: ORDER_URL
               value: "http://order:8002"
+            - name: REDIS_URL
+              value: "redis://redis:6379"
+            - name: RATE_LIMIT_MAX  
+              value: "100"
+            - name: RATE_LIMIT_WINDOW_SECONDS
+              value: "60"
           readinessProbe:
             httpGet:
               path: /metrics

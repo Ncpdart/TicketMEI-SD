@@ -6,9 +6,13 @@ services:
     environment:
       CATALOG_URL: http://catalog:8001
       ORDER_URL: http://order:8002
+      REDIS_URL: redis://redis:6379
+      RATE_LIMIT_MAX: "100"
+      RATE_LIMIT_WINDOW_SECONDS: "60"
     depends_on:
       - catalog
       - order
+      - redis
 
   catalog:
     build: ./catalog
@@ -48,6 +52,16 @@ services:
       - "15692:15692"
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
