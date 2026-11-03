@@ -4,7 +4,7 @@ data:
     \ \"tags\": [\r\n    \"ticketmei\"\r\n  ],\r\n  \"timezone\": \"browser\",\r\n
     \ \"schemaVersion\": 39,\r\n  \"version\": 1,\r\n  \"refresh\": \"5s\",\r\n  \"time\":
     {\r\n    \"from\": \"now-15m\",\r\n    \"to\": \"now\"\r\n  },\r\n  \"panels\":
-    [\r\n    {\r\n      \"id\": 1,\r\n      \"title\": \"RPS por servi├ºo\",\r\n      \"type\":
+    [\r\n    {\r\n      \"id\": 1,\r\n      \"title\": \"RPS por serviço\",\r\n      \"type\":
     \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n
     \       \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n
     \         \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n            \"uid\":
@@ -27,7 +27,7 @@ data:
     \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 0,\r\n
     \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
     \       \"defaults\": {\r\n          \"unit\": \"reqps\"\r\n        },\r\n        \"overrides\":
-    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 3,\r\n      \"title\": \"Lat├¬ncia
+    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 3,\r\n      \"title\": \"Latência
     p95/p99 (Gateway)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
     {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
     \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
@@ -55,7 +55,7 @@ data:
     \       \"x\": 0,\r\n        \"y\": 16,\r\n        \"w\": 12,\r\n        \"h\":
     8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
     \"percentunit\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n
-    \   {\r\n      \"id\": 5,\r\n      \"title\": \"Lat├¬ncia p95/p99 (Catalog)\",\r\n
+    \   {\r\n      \"id\": 5,\r\n      \"title\": \"Latência p95/p99 (Catalog)\",\r\n
     \     \"type\": \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\":
     \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
     [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
@@ -113,7 +113,7 @@ data:
     \     \"id\": 10,\r\n      \"title\": \"Notification\",\r\n      \"type\": \"row\",\r\n
     \     \"collapsed\": false,\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
     33,\r\n        \"w\": 24,\r\n        \"h\": 1\r\n      },\r\n      \"panels\":
-    []\r\n    },\r\n    {\r\n      \"id\": 11,\r\n      \"title\": \"Notifica├º├╡es
+    []\r\n    },\r\n    {\r\n      \"id\": 11,\r\n      \"title\": \"Notificações
     por segundo (SENT / FAILED)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
     {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
     \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
@@ -124,7 +124,7 @@ data:
     34,\r\n        \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\":
     {\r\n        \"defaults\": {\r\n          \"unit\": \"ops\"\r\n        },\r\n
     \       \"overrides\": []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 12,\r\n
-    \     \"title\": \"Lat├¬ncia p95/p99 das notifica├º├╡es\",\r\n      \"type\": \"timeseries\",\r\n
+    \     \"title\": \"Latência p95/p99 das notificações\",\r\n      \"type\": \"timeseries\",\r\n
     \     \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n        \"uid\":
     \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
     {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
@@ -138,7 +138,7 @@ data:
     \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
     \       \"defaults\": {\r\n          \"unit\": \"s\"\r\n        },\r\n        \"overrides\":
     []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 13,\r\n      \"title\": \"Total
-    de notifica├º├╡es\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n
+    de notificações\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n
     \       \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n
     \     \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
     \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
@@ -151,7 +151,7 @@ data:
     {\r\n          \"calcs\": [\r\n            \"lastNotNull\"\r\n          ],\r\n
     \         \"values\": false,\r\n          \"fields\": \"\"\r\n        },\r\n        \"colorMode\":
     \"value\",\r\n        \"graphMode\": \"none\"\r\n      }\r\n    },\r\n    {\r\n
-    \     \"id\": 14,\r\n      \"title\": \"Taxa de falhas das notifica├º├╡es\",\r\n
+    \     \"id\": 14,\r\n      \"title\": \"Taxa de falhas das notificações\",\r\n
     \     \"type\": \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\":
     \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
     [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
@@ -170,7 +170,7 @@ data:
     \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
     \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
     \         },\r\n          \"expr\": \"rabbitmq_queue_messages_ready{queue=\\\"order_created\\\"}\",\r\n
-    \         \"legendFormat\": \"ready (├á espera)\",\r\n          \"refId\": \"A\"\r\n
+    \         \"legendFormat\": \"ready (à espera)\",\r\n          \"refId\": \"A\"\r\n
     \       },\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
     \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
     \"rabbitmq_queue_messages_unacked{queue=\\\"order_created\\\"}\",\r\n          \"legendFormat\":
@@ -181,8 +181,8 @@ data:
     \     ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\": 51,\r\n
     \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
     \       \"defaults\": {\r\n          \"unit\": \"short\"\r\n        },\r\n        \"overrides\":
-    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 17,\r\n      \"title\": \"Produ├º├úo
-    vs consumo (pedidos/s vs notifica├º├╡es/s)\",\r\n      \"type\": \"timeseries\",\r\n
+    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 17,\r\n      \"title\": \"Produção
+    vs consumo (pedidos/s vs notificações/s)\",\r\n      \"type\": \"timeseries\",\r\n
     \     \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n        \"uid\":
     \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
     {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
@@ -191,12 +191,12 @@ data:
     \"A\"\r\n        },\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
     \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
     \"sum(rate(notifications_processed_total[1m]))\",\r\n          \"legendFormat\":
-    \"notifica├º├╡es processadas (consumidas)\",\r\n          \"refId\": \"B\"\r\n        }\r\n
+    \"notificações processadas (consumidas)\",\r\n          \"refId\": \"B\"\r\n        }\r\n
     \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 51,\r\n
     \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
     \       \"defaults\": {\r\n          \"unit\": \"ops\"\r\n        },\r\n        \"overrides\":
     []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 18,\r\n      \"title\": \"Mensagens
-    ├á espera na fila\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n
+    à espera na fila\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n
     \       \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n
     \     \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
     \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
