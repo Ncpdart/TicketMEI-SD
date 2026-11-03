@@ -438,7 +438,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "round(sum by (status) (increase(notifications_processed_total[$__range])))",
+          "expr": "sum by (status) (notifications_processed_total)",
           "legendFormat": "{{status}}",
           "refId": "A"
         }
