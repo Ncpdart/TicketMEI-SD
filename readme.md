@@ -5,6 +5,11 @@ Plataforma eletrónica de venda de bilhetes para eventos.
 Projeto desenvolvido no âmbito da unidade curricular
 de Sistemas Distribuídos do Mestrado em Engenharia Informática.
 
+## Grupo
+- Leonor Vieira (2140223)
+- Raquel Freitas (2146623)
+- Nicole Dias (2121322)
+
 ## Requirements
 - Node.js + express (locally)
 - Docker Desktop
