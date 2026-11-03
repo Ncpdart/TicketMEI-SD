@@ -23,6 +23,7 @@ Cliente -> API Gateway -> Catalog
 
 ## Requisitos
 
+- Node.js + express (localmente)
 - Docker Desktop com o Kubernetes ativo
 
 ## Executar com Docker Compose
