@@ -23,6 +23,7 @@ Cliente -> API Gateway -> Catalog
 
 ## Requisitos
 
+- Node.js + express (localmente)
 - Docker Desktop com o Kubernetes ativo
 
 ## Executar com Docker Compose
@@ -103,4 +104,4 @@ docker compose --profile testing run --rm k6 run load-test.js
 
 ## Rate limiter
 
-O API Gateway usa um rate limiter baseado em Redis, que limita a 5 pedidos por segundo por IP de cliente no `POST /orders`. O tráfego excedente recebe HTTP 429 (Too Many Requests).
+O API Gateway usa um rate limiter baseado em Redis, que limita o número de pedidos por IP de cliente no `POST /orders`. O tráfego excedente recebe HTTP 429 (Too Many Requests). O limite e a janela de tempo são configuráveis com as variáveis `RATE_LIMIT_MAX` e `RATE_LIMIT_WINDOW_SECONDS`.
