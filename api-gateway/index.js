@@ -92,6 +92,8 @@ app.use((req, res, next) => {
 });
 
 // Routes
+
+// Get events
 app.get('/events', rateLimiter, async (req, res) => {
     try {
         const response = await fetch(`${CATALOG_URL}/events`);
@@ -107,6 +109,37 @@ app.get('/events', rateLimiter, async (req, res) => {
     }
 });
 
+// Get event by ID
+app.get('/events/:id', async (req, res) => {
+    try {
+        const response = await fetch(
+            `${CATALOG_URL}/events/${encodeURIComponent(req.params.id)}`
+        );
+
+        const data = await response.json();
+        res.status(response.status).json(data);
+    } catch (error) {
+        console.error('Error communicating with Catalog:', error.message);
+        res.status(502).json({ error: 'Catalog service unavailable' });
+    }
+});
+
+// Get order by ID
+app.get('/orders/:id', async (req, res) => {
+    try {
+        const response = await fetch(
+            `${ORDER_URL}/orders/${encodeURIComponent(req.params.id)}`
+        );
+
+        const data = await response.json();
+        res.status(response.status).json(data);
+    } catch (error) {
+        console.error('Error communicating with Order:', error.message);
+        res.status(502).json({ error: 'Order service unavailable' });
+    }
+});
+
+// post create a new order
 app.post('/orders', rateLimiter, async (req, res) => {
     try {
         const response = await fetch(`${ORDER_URL}/orders`, {
@@ -128,6 +161,7 @@ app.post('/orders', rateLimiter, async (req, res) => {
     }
 });
 
+// Get gateway metrics
 app.get('/metrics', async (req, res) => {
     res.set('Content-Type', register.contentType);
     res.end(await register.metrics());
