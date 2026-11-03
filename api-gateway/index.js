@@ -92,7 +92,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.get('/events', async (req, res) => {
+app.get('/events', rateLimiter, async (req, res) => {
     try {
         const response = await fetch(`${CATALOG_URL}/events`);
         const data = await response.json();
