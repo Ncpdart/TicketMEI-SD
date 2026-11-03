@@ -2,4 +2,6 @@ node_modules/
 .env
 .DS_Store
 npm-debug.log*
-*.db
+.db
+port-forwards.ps1
+port-forwards-stop.ps1
