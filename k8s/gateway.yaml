@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: ghcr.io/ncpdart/ticketmei-api-gateway:f639b2130094a2765f993da8941f79de53c2a112
+          image: ghcr.io/ncpdart/ticketmei-api-gateway:807df9bc86c35e101457240eb1fab13fc6041ef4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
