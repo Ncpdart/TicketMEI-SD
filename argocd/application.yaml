@@ -1,0 +1,19 @@
+# Argo CD application: keeps the cluster in sync with the k8s/ folder of this repository
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ticketmei
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Ncpdart/TicketMEI-SD.git
+    targetRevision: main
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
