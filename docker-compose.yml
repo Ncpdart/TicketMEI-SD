@@ -24,11 +24,13 @@ services:
     ports:
       - "8002:8002"
     environment:
-      API_GATEWAY_URL: http://api-gateway:8000
+      CATALOG_URL: http://catalog:8001
       RABBITMQ_URL: amqp://rabbitmq
     volumes:
       - ./order/database:/app/database
     depends_on:
+      catalog:
+        condition: service_started
       rabbitmq:
         condition: service_healthy
 

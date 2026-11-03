@@ -43,7 +43,7 @@ const ordersInitiated = new client.Counter({
   labelNames: ["status"],
 });
 
-const API_GATEWAY_URL = process.env.API_GATEWAY_URL || "http://localhost:8000";
+const CATALOG_URL = process.env.CATALOG_URL || "http://localhost:8001";
 
 // RabbitMQ connection
 let rabbitChannel = null;
@@ -87,8 +87,16 @@ app.post("/orders", async (req, res) => {
   }
 
   try {
-    // Obtain event details from catalog through the api-gateway service
-    const response = await fetch(`${API_GATEWAY_URL}/events`);
+    // Obtain event details from catalog
+    const response = await fetch(
+      `${CATALOG_URL}/events/${encodeURIComponent(event_id)}`,
+    );
+
+    if (response.status === 404) {
+      return res.status(404).json({
+        error: "Event not found",
+      });
+    }
 
     if (!response.ok) {
       return res.status(502).json({
@@ -96,14 +104,7 @@ app.post("/orders", async (req, res) => {
       });
     }
 
-    const events = await response.json();
-    const event = events.find((event) => event.id === event_id);
-
-    if (!event) {
-      return res.status(404).json({
-        error: "Event not found",
-      });
-    }
+    const event = await response.json();
 
     // Calculate total using the Catalog price
     const total_amount = Number((event.price_eur * quantity).toFixed(2));

@@ -35,8 +35,8 @@ spec:
             - containerPort: 8002
               name: http
           env:
-            - name: API_GATEWAY_URL
-              value: "http://api-gateway:8000"
+            - name: CATALOG_URL
+              value: "http://catalog:8001"
             - name: RABBITMQ_URL
               value: "amqp://rabbitmq"
           volumeMounts:
