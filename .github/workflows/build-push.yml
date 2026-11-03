@@ -12,14 +12,41 @@ on:
   workflow_dispatch:
 
 jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.changes.outputs.services }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed services
+        id: changes
+        run: |
+          all="api-gateway catalog order notification"
+          before="${{ github.event.before }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            changed="$all"
+          else
+            files=$(git diff --name-only "$before" "${{ github.sha }}")
+            changed=""
+            for s in $all; do
+              if grep -q "^$s/" <<< "$files"; then changed="$changed $s"; fi
+            done
+          fi
+          echo "services=$(jq -nc --arg s "$changed" '$s | split(" ") | map(select(length > 0))')" >> "$GITHUB_OUTPUT"
+
   build-push:
+    needs: detect
+    if: needs.detect.outputs.services != '[]'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     strategy:
       matrix:
-        service: [api-gateway, catalog, order, notification]
+        service: ${{ fromJson(needs.detect.outputs.services) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -43,3 +70,31 @@ jobs:
             ${{ env.IMAGE }}:latest
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+  update-manifests:
+    needs: [detect, build-push]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Update image tags in k8s/
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          for s in $(jq -r '.[]' <<< '${{ needs.detect.outputs.services }}'); do
+            file="k8s/${s#api-}.yaml"
+            sed -i -E "s#^( *image: ).*#\1ghcr.io/${owner}/ticketmei-${s}:${{ github.sha }}#" "$file"
+          done
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add k8s
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "chore: update image tags to ${GITHUB_SHA::7}"
+          git pull --rebase origin main
+          git push origin HEAD:main
