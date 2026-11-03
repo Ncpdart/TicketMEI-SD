@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: order
-          image: ticketmei/order:1.0.1
+          image: ghcr.io/ncpdart/ticketmei-order:ae20bc02a0f8b768228f68060d748e6598172286
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8002
