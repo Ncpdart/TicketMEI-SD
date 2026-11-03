@@ -142,7 +142,7 @@ data:
     \       \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n
     \     \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
     \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
-    \"round(sum by (status) (increase(notifications_processed_total[$__range])))\",\r\n
+    \"sum by (status) (notifications_processed_total)\",\r\n
     \         \"legendFormat\": \"{{status}}\",\r\n          \"refId\": \"A\"\r\n
     \       }\r\n      ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
     42,\r\n        \"w\": 12,\r\n        \"h\": 5\r\n      },\r\n      \"fieldConfig\":
