@@ -5,6 +5,7 @@ const events = require('./data/events.json');
 
 const app = express();
 const PORT = 8001;
+// Catalog service: lists events and event details
 
 const register = new client.Registry();
 
