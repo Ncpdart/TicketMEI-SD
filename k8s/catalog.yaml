@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: catalog
-          image: ghcr.io/ncpdart/ticketmei-catalog:ce79c0565d87b1f3ff5a7a4121743f530c5aa6d6
+          image: ghcr.io/ncpdart/ticketmei-catalog:7b577dfbfe62e4e2c7bcc21fd249c2f9becefe34
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8001
