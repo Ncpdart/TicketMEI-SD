@@ -77,5 +77,5 @@ app.get('/metrics', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Catalog running on port ${PORT}`);
+    console.log(`Catalog running on port ${PORT} abc`);
 });
