@@ -9,6 +9,7 @@ on:
       - 'catalog/**'
       - 'order/**'
       - 'notification/**'
+      - 'payment/**'
   workflow_dispatch:
 
 jobs:
@@ -24,7 +25,7 @@ jobs:
       - name: Detect changed services
         id: changes
         run: |
-          all="api-gateway catalog order notification"
+          all="api-gateway catalog order notification payment"
           before="${{ github.event.before }}"
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
             changed="$all"

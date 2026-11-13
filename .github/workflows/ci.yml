@@ -24,7 +24,7 @@ jobs:
 
       - name: Esperar que o ambiente responda
         run: |
-          for url in http://localhost:8000/events http://localhost:8002/metrics http://localhost:8003/metrics; do
+          for url in http://localhost:8000/events http://localhost:8002/metrics http://localhost:8003/metrics http://localhost:8004/metrics; do
             for i in $(seq 1 45); do
               curl -sf "$url" > /dev/null && break
               [ "$i" = 45 ] && { echo "FALHOU $url"; exit 1; }
