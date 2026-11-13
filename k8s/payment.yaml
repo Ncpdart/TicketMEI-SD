@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: payment
-          image: ghcr.io/ncpdart/ticketmei-payment:latest
+          image: ghcr.io/ncpdart/ticketmei-payment:bcbd2fd3fb8d1843bf157598cef30d47294c2c47
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8004
