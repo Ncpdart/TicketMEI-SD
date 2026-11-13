@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: notification
-          image: ghcr.io/ncpdart/ticketmei-notification:ae20bc02a0f8b768228f68060d748e6598172286
+          image: ghcr.io/ncpdart/ticketmei-notification:e76816a621407672900eaf0c0fa7f628cc5d3b28
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8003
