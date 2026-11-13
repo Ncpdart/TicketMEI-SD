@@ -26,6 +26,8 @@ services:
     environment:
       CATALOG_URL: http://catalog:8001
       RABBITMQ_URL: amqp://rabbitmq
+      PAYMENT_URL: http://payment:8004
+      PAYMENT_TIMEOUT: "5000"
     volumes:
       - ./order/database:/app/database
     depends_on:
@@ -33,6 +35,17 @@ services:
         condition: service_started
       rabbitmq:
         condition: service_healthy
+      payment:
+        condition: service_started
+
+  payment:
+    build: ./payment
+    ports:
+      - "8004:8004"
+    environment:
+      PORT: 8004
+    volumes:
+      - payment_data:/app/database
 
   notification:
     build: ./notification
@@ -79,6 +92,7 @@ services:
       - catalog
       - order
       - notification
+      - payment
 
   grafana:
     image: grafana/grafana:latest
@@ -111,3 +125,6 @@ services:
       - api-gateway
     profiles:
       - testing
+
+volumes:
+  payment_data:

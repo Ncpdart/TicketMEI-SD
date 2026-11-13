@@ -7,7 +7,9 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 8003;
 const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://localhost";
+const EXCHANGE_NAME = "orders.exchange";
 const QUEUE_NAME = "order_created";
+const ROUTING_KEY = "OrderCreated";
 
 // Json Logs
 const LOGS_FILE = path.join(__dirname, "data", "notifications_logs.json");
@@ -63,7 +65,15 @@ async function startConsumer() {
   try {
     const connection = await amqp.connect(RABBITMQ_URL);
     const channel = await connection.createChannel();
+
+    // Declare exchange
+    await channel.assertExchange(EXCHANGE_NAME, "direct", { durable: true });
+
+    // Declare queue
     await channel.assertQueue(QUEUE_NAME, { durable: true });
+
+    // Bind queue to exchange
+    await channel.bindQueue(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);
 
     // Process one message at a time
     channel.prefetch(1);
@@ -107,7 +117,7 @@ async function startConsumer() {
         saveNotification({
           order_id: order.order_id,
           email,
-          status: "FAILED"
+          status: "FAILED",
         });
 
         notificationsProcessed.inc({ status: "FAILED" });

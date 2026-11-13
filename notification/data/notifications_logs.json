@@ -18,5 +18,15 @@
     "order_id": 9,
     "email": "customer_C004@example.com",
     "status": "SENT"
+  },
+  {
+    "order_id": 3,
+    "email": "customer_test_customer@example.com",
+    "status": "SENT"
+  },
+  {
+    "order_id": 7,
+    "email": "customer_cb_recovery@example.com",
+    "status": "SENT"
   }
 ]
