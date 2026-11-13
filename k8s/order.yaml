@@ -39,6 +39,10 @@ spec:
               value: "http://catalog:8001"
             - name: RABBITMQ_URL
               value: "amqp://rabbitmq"
+            - name: PAYMENT_URL
+              value: "http://payment:8004"
+            - name: PAYMENT_TIMEOUT
+              value: "5000"
           volumeMounts:
             - name: order-database
               mountPath: /app/database

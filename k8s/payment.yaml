@@ -1,0 +1,80 @@
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: payment-database-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    app: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - name: payment
+          image: ghcr.io/ncpdart/ticketmei-payment:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8004
+              name: http
+          env:
+            - name: PORT
+              value: "8004"
+          volumeMounts:
+            - name: payment-database
+              mountPath: /app/database
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 8004
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 8004
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+      volumes:
+        - name: payment-database
+          persistentVolumeClaim:
+            claimName: payment-database-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+spec:
+  type: ClusterIP
+  selector:
+    app: payment
+  ports:
+    - name: http
+      port: 8004
+      targetPort: 8004
+      protocol: TCP

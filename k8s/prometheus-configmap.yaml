@@ -20,6 +20,10 @@ data:
         static_configs:
           - targets: ['order:8002']
 
+      - job_name: "payment"
+        static_configs:
+          - targets: ["payment:8004"]
+
       - job_name: 'notification'
         static_configs:
           - targets: ['notification:8003']
