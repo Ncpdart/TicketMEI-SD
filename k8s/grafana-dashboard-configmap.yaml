@@ -1,226 +1,1171 @@
 ﻿apiVersion: v1
-data:
-  dashboard.json: "{\r\n  \"uid\": \"ticketmei\",\r\n  \"title\": \"TicketMEI\",\r\n
-    \ \"tags\": [\r\n    \"ticketmei\"\r\n  ],\r\n  \"timezone\": \"browser\",\r\n
-    \ \"schemaVersion\": 39,\r\n  \"version\": 1,\r\n  \"refresh\": \"5s\",\r\n  \"time\":
-    {\r\n    \"from\": \"now-15m\",\r\n    \"to\": \"now\"\r\n  },\r\n  \"panels\":
-    [\r\n    {\r\n      \"id\": 1,\r\n      \"title\": \"RPS por serviço\",\r\n      \"type\":
-    \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n
-    \       \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n
-    \         \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n            \"uid\":
-    \"prometheus\"\r\n          },\r\n          \"expr\": \"sum(rate(gateway_requests_total[1m]))\",\r\n
-    \         \"legendFormat\": \"api-gateway\",\r\n          \"refId\": \"A\"\r\n
-    \       },\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
-    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
-    \"sum(rate(catalog_requests_total[1m]))\",\r\n          \"legendFormat\": \"catalog\",\r\n
-    \         \"refId\": \"B\"\r\n        }\r\n      ],\r\n      \"gridPos\": {\r\n
-    \       \"x\": 0,\r\n        \"y\": 0,\r\n        \"w\": 12,\r\n        \"h\":
-    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
-    \"reqps\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n
-    \   {\r\n      \"id\": 2,\r\n      \"title\": \"RPS por endpoint e status (Gateway)\",\r\n
-    \     \"type\": \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\":
-    \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
-    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
-    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"sum
-    by (endpoint, http_status) (rate(gateway_requests_total[1m]))\",\r\n          \"legendFormat\":
-    \"{{endpoint}} {{http_status}}\",\r\n          \"refId\": \"A\"\r\n        }\r\n
-    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 0,\r\n
-    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
-    \       \"defaults\": {\r\n          \"unit\": \"reqps\"\r\n        },\r\n        \"overrides\":
-    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 3,\r\n      \"title\": \"Latência
-    p95/p99 (Gateway)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
-    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
-    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
-    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"histogram_quantile(0.95, sum by (le) (rate(gateway_request_duration_seconds_bucket[1m])))\",\r\n
-    \         \"legendFormat\": \"p95\",\r\n          \"refId\": \"A\"\r\n        },\r\n
-    \       {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
-    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"histogram_quantile(0.99,
-    sum by (le) (rate(gateway_request_duration_seconds_bucket[1m])))\",\r\n          \"legendFormat\":
-    \"p99\",\r\n          \"refId\": \"B\"\r\n        }\r\n      ],\r\n      \"gridPos\":
-    {\r\n        \"x\": 0,\r\n        \"y\": 8,\r\n        \"w\": 12,\r\n        \"h\":
-    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
-    \"s\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n    {\r\n
-    \     \"id\": 4,\r\n      \"title\": \"Taxa de erros HTTP (Gateway)\",\r\n      \"type\":
-    \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n
-    \       \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n
-    \         \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n            \"uid\":
-    \"prometheus\"\r\n          },\r\n          \"expr\": \"sum(rate(gateway_requests_total{http_status=~\\\"5..\\\"}[1m]))
-    / sum(rate(gateway_requests_total[1m]))\",\r\n          \"legendFormat\": \"5xx\",\r\n
-    \         \"refId\": \"A\"\r\n        },\r\n        {\r\n          \"datasource\":
-    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"sum(rate(gateway_requests_total{http_status=~\\\"4..\\\"}[1m]))
-    / sum(rate(gateway_requests_total[1m]))\",\r\n          \"legendFormat\": \"4xx\",\r\n
-    \         \"refId\": \"B\"\r\n        }\r\n      ],\r\n      \"gridPos\": {\r\n
-    \       \"x\": 0,\r\n        \"y\": 16,\r\n        \"w\": 12,\r\n        \"h\":
-    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
-    \"percentunit\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n
-    \   {\r\n      \"id\": 5,\r\n      \"title\": \"Latência p95/p99 (Catalog)\",\r\n
-    \     \"type\": \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\":
-    \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
-    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
-    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"histogram_quantile(0.95,
-    sum by (le) (rate(catalog_request_duration_seconds_bucket[1m])))\",\r\n          \"legendFormat\":
-    \"p95\",\r\n          \"refId\": \"A\"\r\n        },\r\n        {\r\n          \"datasource\":
-    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"histogram_quantile(0.99, sum by (le) (rate(catalog_request_duration_seconds_bucket[1m])))\",\r\n
-    \         \"legendFormat\": \"p99\",\r\n          \"refId\": \"B\"\r\n        }\r\n
-    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 8,\r\n
-    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
-    \       \"defaults\": {\r\n          \"unit\": \"s\"\r\n        },\r\n        \"overrides\":
-    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 6,\r\n      \"title\": \"Taxa
-    de erros HTTP (Catalog)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
-    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
-    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
-    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"sum(rate(catalog_requests_total{http_status=~\\\"5..\\\"}[1m]))
-    / sum(rate(catalog_requests_total[1m]))\",\r\n          \"legendFormat\": \"5xx\",\r\n
-    \         \"refId\": \"A\"\r\n        },\r\n        {\r\n          \"datasource\":
-    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"sum(rate(catalog_requests_total{http_status=~\\\"4..\\\"}[1m]))
-    / sum(rate(catalog_requests_total[1m]))\",\r\n          \"legendFormat\": \"4xx\",\r\n
-    \         \"refId\": \"B\"\r\n        }\r\n      ],\r\n      \"gridPos\": {\r\n
-    \       \"x\": 12,\r\n        \"y\": 16,\r\n        \"w\": 12,\r\n        \"h\":
-    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
-    \"percentunit\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n
-    \   {\r\n      \"id\": 7,\r\n      \"title\": \"Order\",\r\n      \"type\": \"row\",\r\n
-    \     \"collapsed\": false,\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
-    24,\r\n        \"w\": 24,\r\n        \"h\": 1\r\n      },\r\n      \"panels\":
-    []\r\n    },\r\n    {\r\n      \"id\": 8,\r\n      \"title\": \"Pedidos criados
-    por segundo (por estado)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
-    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
-    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
-    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"sum by (status) (rate(orders_initiated_total[1m]))\",\r\n
-    \         \"legendFormat\": \"{{status}}\",\r\n          \"refId\": \"A\"\r\n
-    \       }\r\n      ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
-    25,\r\n        \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\":
-    {\r\n        \"defaults\": {\r\n          \"unit\": \"ops\"\r\n        },\r\n
-    \       \"overrides\": []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 9,\r\n
-    \     \"title\": \"Total de pedidos criados\",\r\n      \"type\": \"stat\",\r\n
-    \     \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n        \"uid\":
-    \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
-    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"sum by (status) (orders_initiated_total)\",\r\n
-    \         \"legendFormat\": \"{{status}}\",\r\n          \"refId\": \"A\"\r\n
-    \       }\r\n      ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\":
-    25,\r\n        \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\":
-    {\r\n        \"defaults\": {\r\n          \"unit\": \"short\"\r\n        },\r\n
-    \       \"overrides\": []\r\n      },\r\n      \"options\": {\r\n        \"reduceOptions\":
-    {\r\n          \"calcs\": [\r\n            \"lastNotNull\"\r\n          ],\r\n
-    \         \"values\": false,\r\n          \"fields\": \"\"\r\n        },\r\n        \"colorMode\":
-    \"value\",\r\n        \"graphMode\": \"none\"\r\n      }\r\n    },\r\n    {\r\n
-    \     \"id\": 10,\r\n      \"title\": \"Notification\",\r\n      \"type\": \"row\",\r\n
-    \     \"collapsed\": false,\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
-    33,\r\n        \"w\": 24,\r\n        \"h\": 1\r\n      },\r\n      \"panels\":
-    []\r\n    },\r\n    {\r\n      \"id\": 11,\r\n      \"title\": \"Notificações
-    por segundo (SENT / FAILED)\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
-    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
-    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
-    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"sum by (status) (rate(notifications_processed_total[1m]))\",\r\n
-    \         \"legendFormat\": \"{{status}}\",\r\n          \"refId\": \"A\"\r\n
-    \       }\r\n      ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
-    34,\r\n        \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\":
-    {\r\n        \"defaults\": {\r\n          \"unit\": \"ops\"\r\n        },\r\n
-    \       \"overrides\": []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 12,\r\n
-    \     \"title\": \"Latência p95/p99 das notificações\",\r\n      \"type\": \"timeseries\",\r\n
-    \     \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n        \"uid\":
-    \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
-    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"histogram_quantile(0.95, sum by (le) (rate(notification_processing_duration_seconds_bucket[1m])))\",\r\n
-    \         \"legendFormat\": \"p95\",\r\n          \"refId\": \"A\"\r\n        },\r\n
-    \       {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
-    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"histogram_quantile(0.99,
-    sum by (le) (rate(notification_processing_duration_seconds_bucket[1m])))\",\r\n
-    \         \"legendFormat\": \"p99\",\r\n          \"refId\": \"B\"\r\n        }\r\n
-    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 34,\r\n
-    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
-    \       \"defaults\": {\r\n          \"unit\": \"s\"\r\n        },\r\n        \"overrides\":
-    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 13,\r\n      \"title\": \"Total
-    de notificações\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n
-    \       \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n
-    \     \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
-    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
-    \"sum by (status) (notifications_processed_total)\",\r\n
-    \         \"legendFormat\": \"{{status}}\",\r\n          \"refId\": \"A\"\r\n
-    \       }\r\n      ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\":
-    42,\r\n        \"w\": 12,\r\n        \"h\": 5\r\n      },\r\n      \"fieldConfig\":
-    {\r\n        \"defaults\": {\r\n          \"unit\": \"short\"\r\n        },\r\n
-    \       \"overrides\": []\r\n      },\r\n      \"options\": {\r\n        \"reduceOptions\":
-    {\r\n          \"calcs\": [\r\n            \"lastNotNull\"\r\n          ],\r\n
-    \         \"values\": false,\r\n          \"fields\": \"\"\r\n        },\r\n        \"colorMode\":
-    \"value\",\r\n        \"graphMode\": \"none\"\r\n      }\r\n    },\r\n    {\r\n
-    \     \"id\": 14,\r\n      \"title\": \"Taxa de falhas das notificações\",\r\n
-    \     \"type\": \"timeseries\",\r\n      \"datasource\": {\r\n        \"type\":
-    \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
-    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
-    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"sum(rate(notifications_processed_total{status=\\\"FAILED\\\"}[1m]))
-    / sum(rate(notifications_processed_total[1m])) or vector(0)\",\r\n          \"legendFormat\":
-    \"FAILED\",\r\n          \"refId\": \"A\"\r\n        }\r\n      ],\r\n      \"gridPos\":
-    {\r\n        \"x\": 12,\r\n        \"y\": 42,\r\n        \"w\": 12,\r\n        \"h\":
-    8\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
-    \"percentunit\"\r\n        },\r\n        \"overrides\": []\r\n      }\r\n    },\r\n
-    \   {\r\n      \"id\": 15,\r\n      \"title\": \"RabbitMQ\",\r\n      \"type\":
-    \"row\",\r\n      \"collapsed\": false,\r\n      \"gridPos\": {\r\n        \"x\":
-    0,\r\n        \"y\": 50,\r\n        \"w\": 24,\r\n        \"h\": 1\r\n      },\r\n
-    \     \"panels\": []\r\n    },\r\n    {\r\n      \"id\": 16,\r\n      \"title\":
-    \"Tamanho da fila order_created\",\r\n      \"type\": \"timeseries\",\r\n      \"datasource\":
-    {\r\n        \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n
-    \     },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n
-    \           \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"rabbitmq_queue_messages_ready{queue=\\\"order_created\\\"}\",\r\n
-    \         \"legendFormat\": \"ready (à espera)\",\r\n          \"refId\": \"A\"\r\n
-    \       },\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
-    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
-    \"rabbitmq_queue_messages_unacked{queue=\\\"order_created\\\"}\",\r\n          \"legendFormat\":
-    \"unacked (em processamento)\",\r\n          \"refId\": \"B\"\r\n        },\r\n
-    \       {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
-    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"rabbitmq_queue_messages{queue=\\\"order_created\\\"}\",\r\n
-    \         \"legendFormat\": \"total\",\r\n          \"refId\": \"C\"\r\n        }\r\n
-    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 0,\r\n        \"y\": 51,\r\n
-    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
-    \       \"defaults\": {\r\n          \"unit\": \"short\"\r\n        },\r\n        \"overrides\":
-    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 17,\r\n      \"title\": \"Produção
-    vs consumo (pedidos/s vs notificações/s)\",\r\n      \"type\": \"timeseries\",\r\n
-    \     \"datasource\": {\r\n        \"type\": \"prometheus\",\r\n        \"uid\":
-    \"prometheus\"\r\n      },\r\n      \"targets\": [\r\n        {\r\n          \"datasource\":
-    {\r\n            \"type\": \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n
-    \         },\r\n          \"expr\": \"sum(rate(orders_initiated_total[1m]))\",\r\n
-    \         \"legendFormat\": \"pedidos criados (publicados)\",\r\n          \"refId\":
-    \"A\"\r\n        },\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
-    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
-    \"sum(rate(notifications_processed_total[1m]))\",\r\n          \"legendFormat\":
-    \"notificações processadas (consumidas)\",\r\n          \"refId\": \"B\"\r\n        }\r\n
-    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 12,\r\n        \"y\": 51,\r\n
-    \       \"w\": 12,\r\n        \"h\": 8\r\n      },\r\n      \"fieldConfig\": {\r\n
-    \       \"defaults\": {\r\n          \"unit\": \"ops\"\r\n        },\r\n        \"overrides\":
-    []\r\n      }\r\n    },\r\n    {\r\n      \"id\": 18,\r\n      \"title\": \"Mensagens
-    à espera na fila\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n
-    \       \"type\": \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n
-    \     \"targets\": [\r\n        {\r\n          \"datasource\": {\r\n            \"type\":
-    \"prometheus\",\r\n            \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\":
-    \"rabbitmq_queue_messages_ready{queue=\\\"order_created\\\"}\",\r\n          \"legendFormat\":
-    \"ready\",\r\n          \"refId\": \"A\"\r\n        }\r\n      ],\r\n      \"gridPos\":
-    {\r\n        \"x\": 0,\r\n        \"y\": 59,\r\n        \"w\": 6,\r\n        \"h\":
-    5\r\n      },\r\n      \"fieldConfig\": {\r\n        \"defaults\": {\r\n          \"unit\":
-    \"short\"\r\n        },\r\n        \"overrides\": []\r\n      },\r\n      \"options\":
-    {\r\n        \"reduceOptions\": {\r\n          \"calcs\": [\r\n            \"lastNotNull\"\r\n
-    \         ],\r\n          \"values\": false,\r\n          \"fields\": \"\"\r\n
-    \       },\r\n        \"colorMode\": \"value\",\r\n        \"graphMode\": \"none\"\r\n
-    \     }\r\n    },\r\n    {\r\n      \"id\": 19,\r\n      \"title\": \"Consumidores
-    ligados\",\r\n      \"type\": \"stat\",\r\n      \"datasource\": {\r\n        \"type\":
-    \"prometheus\",\r\n        \"uid\": \"prometheus\"\r\n      },\r\n      \"targets\":
-    [\r\n        {\r\n          \"datasource\": {\r\n            \"type\": \"prometheus\",\r\n
-    \           \"uid\": \"prometheus\"\r\n          },\r\n          \"expr\": \"rabbitmq_queue_consumers{queue=\\\"order_created\\\"}\",\r\n
-    \         \"legendFormat\": \"consumers\",\r\n          \"refId\": \"A\"\r\n        }\r\n
-    \     ],\r\n      \"gridPos\": {\r\n        \"x\": 6,\r\n        \"y\": 59,\r\n
-    \       \"w\": 6,\r\n        \"h\": 5\r\n      },\r\n      \"fieldConfig\": {\r\n
-    \       \"defaults\": {\r\n          \"unit\": \"short\"\r\n        },\r\n        \"overrides\":
-    []\r\n      },\r\n      \"options\": {\r\n        \"reduceOptions\": {\r\n          \"calcs\":
-    [\r\n            \"lastNotNull\"\r\n          ],\r\n          \"values\": false,\r\n
-    \         \"fields\": \"\"\r\n        },\r\n        \"colorMode\": \"value\",\r\n
-    \       \"graphMode\": \"none\"\r\n      }\r\n    }\r\n  ]\r\n}"
 kind: ConfigMap
 metadata:
   name: grafana-dashboard
+data:
+  dashboard.json: |
+    {
+      "uid": "ticketmei",
+      "title": "TicketMEI",
+      "tags": [
+        "ticketmei"
+      ],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 2,
+      "refresh": "5s",
+      "time": {
+        "from": "now-15m",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "RPS por serviço",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(gateway_requests_total[1m]))",
+              "legendFormat": "api-gateway",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(catalog_requests_total[1m]))",
+              "legendFormat": "catalog",
+              "refId": "B"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 2,
+          "title": "RPS por endpoint e status (Gateway)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (endpoint, http_status) (rate(gateway_requests_total[1m]))",
+              "legendFormat": "{{endpoint}} {{http_status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 3,
+          "title": "Latência p95/p99 (Gateway)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(gateway_request_duration_seconds_bucket[1m])))",
+              "legendFormat": "p95",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "histogram_quantile(0.99, sum by (le) (rate(gateway_request_duration_seconds_bucket[1m])))",
+              "legendFormat": "p99",
+              "refId": "B"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 4,
+          "title": "Taxa de erros HTTP (Gateway)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(gateway_requests_total{http_status=~\"5..\"}[1m])) / sum(rate(gateway_requests_total[1m]))",
+              "legendFormat": "5xx",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(gateway_requests_total{http_status=~\"4..\"}[1m])) / sum(rate(gateway_requests_total[1m]))",
+              "legendFormat": "4xx",
+              "refId": "B"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 16,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 5,
+          "title": "Latência p95/p99 (Catalog)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(catalog_request_duration_seconds_bucket[1m])))",
+              "legendFormat": "p95",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "histogram_quantile(0.99, sum by (le) (rate(catalog_request_duration_seconds_bucket[1m])))",
+              "legendFormat": "p99",
+              "refId": "B"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 6,
+          "title": "Taxa de erros HTTP (Catalog)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(catalog_requests_total{http_status=~\"5..\"}[1m])) / sum(rate(catalog_requests_total[1m]))",
+              "legendFormat": "5xx",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(catalog_requests_total{http_status=~\"4..\"}[1m])) / sum(rate(catalog_requests_total[1m]))",
+              "legendFormat": "4xx",
+              "refId": "B"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 16,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 7,
+          "title": "Order",
+          "type": "row",
+          "collapsed": false,
+          "gridPos": {
+            "x": 0,
+            "y": 24,
+            "w": 24,
+            "h": 1
+          },
+          "panels": []
+        },
+        {
+          "id": 8,
+          "title": "Pedidos criados por segundo (por estado)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (status) (rate(orders_initiated_total[1m]))",
+              "legendFormat": "{{status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 25,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 9,
+          "title": "Total de pedidos criados",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (status) (orders_initiated_total)",
+              "legendFormat": "{{status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 25,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": false,
+              "fields": ""
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 10,
+          "title": "Notification",
+          "type": "row",
+          "collapsed": false,
+          "gridPos": {
+            "x": 0,
+            "y": 33,
+            "w": 24,
+            "h": 1
+          },
+          "panels": []
+        },
+        {
+          "id": 11,
+          "title": "Notificações por segundo (SENT / FAILED)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (status) (rate(notifications_processed_total[1m]))",
+              "legendFormat": "{{status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 34,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 12,
+          "title": "Latência p95/p99 das notificações",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(notification_processing_duration_seconds_bucket[1m])))",
+              "legendFormat": "p95",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "histogram_quantile(0.99, sum by (le) (rate(notification_processing_duration_seconds_bucket[1m])))",
+              "legendFormat": "p99",
+              "refId": "B"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 34,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 13,
+          "title": "Total de notificações",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (status) (notifications_processed_total)",
+              "legendFormat": "{{status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 42,
+            "w": 12,
+            "h": 5
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": false,
+              "fields": ""
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 14,
+          "title": "Taxa de falhas das notificações",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(notifications_processed_total{status=\"FAILED\"}[1m])) / sum(rate(notifications_processed_total[1m])) or vector(0)",
+              "legendFormat": "FAILED",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 42,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 15,
+          "title": "RabbitMQ",
+          "type": "row",
+          "collapsed": false,
+          "gridPos": {
+            "x": 0,
+            "y": 50,
+            "w": 24,
+            "h": 1
+          },
+          "panels": []
+        },
+        {
+          "id": 16,
+          "title": "Tamanho da fila order_created",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "rabbitmq_queue_messages_ready{queue=\"order_created\"}",
+              "legendFormat": "ready (à espera)",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "rabbitmq_queue_messages_unacked{queue=\"order_created\"}",
+              "legendFormat": "unacked (em processamento)",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "rabbitmq_queue_messages{queue=\"order_created\"}",
+              "legendFormat": "total",
+              "refId": "C"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 51,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 17,
+          "title": "Produção vs consumo (pedidos/s vs notificações/s)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(orders_initiated_total[1m]))",
+              "legendFormat": "pedidos criados (publicados)",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(notifications_processed_total[1m]))",
+              "legendFormat": "notificações processadas (consumidas)",
+              "refId": "B"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 51,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 18,
+          "title": "Mensagens à espera na fila",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "rabbitmq_queue_messages_ready{queue=\"order_created\"}",
+              "legendFormat": "ready",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 59,
+            "w": 6,
+            "h": 5
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": false,
+              "fields": ""
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 19,
+          "title": "Consumidores ligados",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "rabbitmq_queue_consumers{queue=\"order_created\"}",
+              "legendFormat": "consumers",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 6,
+            "y": 59,
+            "w": 6,
+            "h": 5
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": false,
+              "fields": ""
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 20,
+          "title": "Circuit Breaker (Order -> Payment)",
+          "type": "row",
+          "collapsed": false,
+          "gridPos": {
+            "x": 0,
+            "y": 64,
+            "w": 24,
+            "h": 1
+          },
+          "panels": []
+        },
+        {
+          "id": 21,
+          "title": "Estado atual do circuito",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "max(circuit_breaker_state)",
+              "legendFormat": "estado",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 65,
+            "w": 6,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "mappings": [
+                {
+                  "type": "value",
+                  "options": {
+                    "0": {
+                      "text": "CLOSED",
+                      "color": "green",
+                      "index": 0
+                    },
+                    "1": {
+                      "text": "OPEN",
+                      "color": "red",
+                      "index": 1
+                    },
+                    "2": {
+                      "text": "HALF-OPEN",
+                      "color": "orange",
+                      "index": 2
+                    }
+                  }
+                }
+              ],
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  },
+                  {
+                    "color": "orange",
+                    "value": 2
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": false,
+              "fields": ""
+            },
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value"
+          }
+        },
+        {
+          "id": 22,
+          "title": "Estado do circuito ao longo do tempo (0=CLOSED, 1=OPEN, 2=HALF-OPEN)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "max(circuit_breaker_state)",
+              "legendFormat": "estado",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 6,
+            "y": 65,
+            "w": 18,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "min": 0,
+              "max": 2,
+              "mappings": [
+                {
+                  "type": "value",
+                  "options": {
+                    "0": {
+                      "text": "CLOSED",
+                      "color": "green",
+                      "index": 0
+                    },
+                    "1": {
+                      "text": "OPEN",
+                      "color": "red",
+                      "index": 1
+                    },
+                    "2": {
+                      "text": "HALF-OPEN",
+                      "color": "orange",
+                      "index": 2
+                    }
+                  }
+                }
+              ],
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "stepAfter",
+                "fillOpacity": 10,
+                "lineWidth": 2
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 23,
+          "title": "Fallbacks por segundo (pedidos rejeitados pelo circuito aberto)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "rate(circuit_breaker_fallbacks_total[30s])",
+              "legendFormat": "fallbacks/s",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 73,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 24,
+          "title": "Pedidos do Order ao Payment por estado",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (status) (rate(payment_client_requests_total[30s]))",
+              "legendFormat": "{{status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 73,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 25,
+          "title": "Total de fallbacks",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(circuit_breaker_fallbacks_total)",
+              "legendFormat": "fallbacks",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 81,
+            "w": 6,
+            "h": 5
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": false,
+              "fields": ""
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 26,
+          "title": "Total de pedidos ao Payment por estado",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (status) (payment_client_requests_total)",
+              "legendFormat": "{{status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 6,
+            "y": 81,
+            "w": 18,
+            "h": 5
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": false,
+              "fields": ""
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 27,
+          "title": "Payment",
+          "type": "row",
+          "collapsed": false,
+          "gridPos": {
+            "x": 0,
+            "y": 86,
+            "w": 24,
+            "h": 1
+          },
+          "panels": []
+        },
+        {
+          "id": 28,
+          "title": "Pedidos ao Payment por segundo (http_status)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (http_status) (rate(payment_requests_total[30s]))",
+              "legendFormat": "{{http_status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 87,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 29,
+          "title": "Latência p95/p99 do Payment",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(payment_processing_duration_seconds_bucket[30s])))",
+              "legendFormat": "p95",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "histogram_quantile(0.99, sum by (le) (rate(payment_processing_duration_seconds_bucket[30s])))",
+              "legendFormat": "p99",
+              "refId": "B"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 87,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 30,
+          "title": "Taxa de erros do Payment (5xx)",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(payment_requests_total{http_status=~\"5..\"}[30s])) / sum(rate(payment_requests_total[30s])) or vector(0)",
+              "legendFormat": "5xx",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 0,
+            "y": 95,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 31,
+          "title": "Total de pagamentos por http_status",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (http_status) (payment_requests_total)",
+              "legendFormat": "{{http_status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {
+            "x": 12,
+            "y": 95,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": false,
+              "fields": ""
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        }
+      ]
+    }
