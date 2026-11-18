@@ -96,6 +96,11 @@ $p = kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.dat
 docker compose --profile testing run --rm k6 run load-test.js
 ```
 
+```
+$projectPath = (Get-Location).Path
+docker run --rm -i -v "${projectPath}:/scripts" -w /scripts grafana/k6 run /scripts/k6/load-test.js
+```
+
 ## CI/CD
 
 - `ci.yml`: valida o build, o ambiente Docker Compose e executa os testes k6.
