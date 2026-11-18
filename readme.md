@@ -97,8 +97,7 @@ docker compose --profile testing run --rm k6 run load-test.js
 ```
 
 ```
-$projectPath = (Get-Location).Path
-docker run --rm -i -v "${projectPath}:/scripts" -w /scripts grafana/k6 run /scripts/k6/load-test.js
+docker compose --profile testing run --rm k6 run circuit-breaker.js
 ```
 
 ## CI/CD
