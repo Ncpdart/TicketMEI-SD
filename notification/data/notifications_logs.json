@@ -28,5 +28,30 @@
     "order_id": 7,
     "email": "customer_cb_recovery@example.com",
     "status": "SENT"
+  },
+  {
+    "order_id": 8,
+    "email": "customer_K6-3-0@example.com",
+    "status": "SENT"
+  },
+  {
+    "order_id": 9,
+    "email": "customer_K6-1-0@example.com",
+    "status": "SENT"
+  },
+  {
+    "order_id": 10,
+    "email": "customer_K6-9-0@example.com",
+    "status": "SENT"
+  },
+  {
+    "order_id": 11,
+    "email": "customer_K6-8-0@example.com",
+    "status": "SENT"
+  },
+  {
+    "order_id": 12,
+    "email": "customer_K6-10-0@example.com",
+    "status": "SENT"
   }
 ]
