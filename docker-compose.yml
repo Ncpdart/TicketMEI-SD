@@ -28,6 +28,7 @@ services:
       RABBITMQ_URL: amqp://rabbitmq
       PAYMENT_URL: http://payment:8004
       PAYMENT_TIMEOUT: "5000"
+      CIRCUIT_FAILURE_THRESHOLD: "5"
     volumes:
       - ./order/database:/app/database
     depends_on:

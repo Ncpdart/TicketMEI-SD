@@ -43,6 +43,8 @@ spec:
               value: "http://payment:8004"
             - name: PAYMENT_TIMEOUT
               value: "5000"
+            - name: CIRCUIT_FAILURE_THRESHOLD
+              value: "5"
           volumeMounts:
             - name: order-database
               mountPath: /app/database

@@ -72,7 +72,7 @@ const paymentClientRequests = new client.Counter({
 circuitBreakerState.set(0);
 
 // Circuit Breaker configuration
-const CIRCUIT_FAILURE_THRESHOLD = 5;
+const CIRCUIT_FAILURE_THRESHOLD = Number(process.env.CIRCUIT_FAILURE_THRESHOLD || 5);
 const CIRCUIT_RESET_TIMEOUT = 15000;
 const MAX_PAYMENT_ATTEMPTS = 2;
 
@@ -136,6 +136,15 @@ async function processPayment(order) {
 
   try {
     for (let attempt = 1; attempt <= attempts; attempt++) {
+      // Retry: if another request opened the circuit meanwhile, stop retrying immediately
+      if (attempt > 1 && circuitState !== "CLOSED") {
+        circuitBreakerFallbacks.inc();
+
+        const error = new Error("CIRCUIT_OPEN");
+        error.code = "CIRCUIT_OPEN";
+        throw error;
+      }
+
       try {
         const response = await axios.post(
           `${PAYMENT_URL}/payments`,
