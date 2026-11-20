@@ -27,6 +27,10 @@ fs.mkdirSync(databaseDirectory, { recursive: true });
 
 const db = new Database(path.join(databaseDirectory, "order.db"));
 
+// Enable WAL mode for faster SQLite writes
+db.pragma("journal_mode = WAL");
+db.pragma("synchronous = NORMAL");
+
 //For date creation its being used the UTC time zone to avoid issues with time zones in different regions
 db.exec(`
     CREATE TABLE IF NOT EXISTS orders (
